@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: radial-gradient(circle, #ff99ff, #333399);
+            background-size: 200% 200%;
+            color: #fff;
+            text-align: center;
+            padding: 0;
+            margin: 0;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 20px;
+        }
+
+        .weather-info {
+            margin-top: 30px;
+        }
+
+        .weather-info p {
+            font-size: 1.2em;
+            margin: 5px 0;
+        }
+
+        .weather-info strong {
+            font-weight: bold;
+            color: #fff;  /* Optional: makes the bold text stand out */
+        }
+
+        input[type="text"] {
+            padding: 10px;
+            font-size: 1em;
+            width: 60%;
+            border: none;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+
+        .button {
+            padding: 12px 20px;
+            font-size: 1.2em;
+            background-color: pink;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .button:hover {
+            background-color: #ff4971;
+            transform: scale(1.1);
+        }
+
+        .button:active {
+            transform: scale(1.05);
+        }
+
+        .error-message {
+            color: black;
+            background-color: #f8d7da;
+            padding: 10px;
+            border-radius: 5px;
+            display: none;
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Weather App</h1>
+    <input type="text" id="location" placeholder="Enter location" />
+    <button class="button" onclick="getWeather()">Get Weather</button>
+    
+    <div class="error-message" id="error-message">
+        Please enter a valid location!
+    </div>
+    
+    <div class="weather-info" id="weather-info" style="display: none;">
+        <h2>Current Weather</h2>
+        <p><strong>Temperature:</strong> <span id="temperature"></span></p>
+        <p><strong>Description:</strong> <span id="description"></span></p>
+        <p><strong>Humidity:</strong> <span id="humidity"></span></p>
+        <p><strong>Wind Speed:</strong> <span id="wind"></span></p>
+    </div>
+</div>
+
+<script>
+    const apiKey = '263bc5ac67824c5372f81bafa307466b'; // Replace with your own API key
+    const apiUrl = 'https://api.openweathermap.org/data/2.5/weather';
+
+    // Function to get weather data
+    function getWeather() {
+        const location = document.getElementById('location').value;
+
+        if (!location) {
+            document.getElementById('error-message').style.display = 'block';
+            return;
+        }
+
+        document.getElementById('error-message').style.display = 'none';
+
+        // Fetch weather data for user-inputted location
+        fetch(`${apiUrl}?q=${location}&appid=${apiKey}&units=metric`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.cod === 200) {
+                    displayWeather(data);
+                } else {
+                    document.getElementById('error-message').style.display = 'block';
+                    document.getElementById('weather-info').style.display = 'none';
+                }
+            })
+            .catch(() => {
+                document.getElementById('error-message').style.display = 'block';
+                document.getElementById('weather-info').style.display = 'none';
+            });
+    }
+
+    // Function to display weather data
+    function displayWeather(data) {
+        document.getElementById('weather-info').style.display = 'block';
+
+        const temperature = `${data.main.temp}°C`;
+        const description = data.weather[0].description;
+        const humidity = `Humidity: ${data.main.humidity}%`;
+        const wind = `Wind speed: ${data.wind.speed} m/s`;
+
+        document.getElementById('temperature').textContent = temperature;
+        document.getElementById('description').textContent = description;
+        document.getElementById('humidity').textContent = humidity;
+        document.getElementById('wind').textContent = wind;
+    }
+</script>
+
+</body>
+</html>
